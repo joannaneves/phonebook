@@ -50,7 +50,7 @@ const App: React.FC = () => {
           className="add-contact-button"
           onClick={() => setIsAdding(true)}
         >
-          Add Contact
+          + Add Contact
         </button>
       </div>
       <ul className="contact-list">
