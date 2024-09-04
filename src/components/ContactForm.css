@@ -65,3 +65,22 @@
     background-color: #d32f2f;
   }
   
+#root .container{
+  padding-right:0px;
+  width:511px;
+  transform:translatex(0px) translatey(0px);
+ }
+ 
+ #root .add-contact-button{
+  transform:translatex(9px) translatey(-56px);
+ }
+
+ #root input[type=text]{
+  padding-right:0px;
+ }
+
+ #root .container .search-add-container input[type=text].search-bar{
+  width:375px !important;
+ }
+ 
+ 
