@@ -14,40 +14,42 @@ interface ContactListProps {
 }
 
 const ContactList: React.FC<ContactListProps> = ({ contacts, setContacts }) => {
-  const handleContactDeleted = async (name: string) => {
+  const handleContactDeleted = async (id: number) => {
     try {
-      const contactToDelete = contacts.find(
-        (contact) => contact.firstName === name
-      )
-
-      if (contactToDelete) {
-        setContacts(
-          contacts.filter((contact) => contact.id !== contactToDelete.id)
-        )
-      } else {
-        console.warn(`Contact with name "${name}" not found.`)
-      }
+      await fetch(`http://localhost:4000/contacts/${id}`, {
+        method: "DELETE",
+      })
+      setContacts(contacts.filter((contact) => contact.id !== id))
     } catch (error) {
       console.error("Error deleting contact:", error)
     }
   }
 
-  const handleContactUpdated = async (updatedContact: {
-    name: string
-    phoneNumber: string
-  }) => {
+  const handleContactUpdated = async (updatedContact: Contact) => {
     const contactToUpdate = contacts.find(
-      (contact) => contact.firstName === updatedContact.name
+      (contact) => contact.id === updatedContact.id
     )
 
     if (contactToUpdate) {
-      const newContact = { ...contactToUpdate, ...updatedContact }
       try {
-        setContacts(
-          contacts.map((contact) =>
-            contact.id === contactToUpdate.id ? newContact : contact
-          )
+        const response = await fetch(
+          `http://localhost:4000/contacts/${updatedContact.id}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(updatedContact),
+          }
         )
+
+        if (response.ok) {
+          setContacts(
+            contacts.map((contact) =>
+              contact.id === updatedContact.id ? updatedContact : contact
+            )
+          )
+        }
       } catch (error) {
         console.error("Error updating contact:", error)
       }
@@ -59,7 +61,9 @@ const ContactList: React.FC<ContactListProps> = ({ contacts, setContacts }) => {
       {contacts.map((contact) => (
         <ContactItem
           key={contact.id}
-          name={contact.firstName}
+          id={contact.id}
+          firstName={contact.firstName}
+          lastName={contact.lastName}
           phoneNumber={contact.phoneNumber}
           onDelete={handleContactDeleted}
           onUpdate={handleContactUpdated}
